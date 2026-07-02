@@ -1,2 +1,128 @@
-AWSTemplateFormatVersion: "2010-09-09"
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Network Stack
+
+Resources:
+
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      EnableDnsHostnames: true
+      EnableDnsSupport: true
+
+      Tags:
+        - Key: Name
+          Value: workshop-vpc
+
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+
+  AttachInternetGateway:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref VPC
+      InternetGatewayId: !Ref InternetGateway
+
+  PublicSubnetA:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      AvailabilityZone: ap-northeast-1a
+      CidrBlock: 10.0.1.0/24
+      MapPublicIpOnLaunch: true
+
+      Tags:
+        - Key: Name
+          Value: public-subnet-a
+
+  PublicSubnetC:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      AvailabilityZone: ap-northeast-1c
+      CidrBlock: 10.0.2.0/24
+      MapPublicIpOnLaunch: true
+
+      Tags:
+        - Key: Name
+          Value: public-subnet-c
+
+  PrivateSubnetA:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      AvailabilityZone: ap-northeast-1a
+      CidrBlock: 10.0.3.0/24
+
+      Tags:
+        - Key: Name
+          Value: private-subnet-a
+
+  PrivateSubnetC:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      AvailabilityZone: ap-northeast-1c
+      CidrBlock: 10.0.4.0/24
+
+      Tags:
+        - Key: Name
+          Value: private-subnet-c
+
+  PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+
+  DefaultRoute:
+    Type: AWS::EC2::Route
+    DependsOn: AttachInternetGateway
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+
+  PublicSubnetARouteAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnetA
+      RouteTableId: !Ref PublicRouteTable
+
+  PublicSubnetCRouteAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnetC
+      RouteTableId: !Ref PublicRouteTable
+
+Outputs:
+
+  VpcId:
+    Description: VPC ID
+    Value: !Ref VPC
+    Export:
+      Name: WorkshopVpcId
+
+  PublicSubnetA:
+    Description: Public Subnet A
+    Value: !Ref PublicSubnetA
+    Export:
+      Name: WorkshopPublicSubnetA
+
+  PublicSubnetC:
+    Description: Public Subnet C
+    Value: !Ref PublicSubnetC
+    Export:
+      Name: WorkshopPublicSubnetC
+
+  PrivateSubnetA:
+    Description: Private Subnet A
+    Value: !Ref PrivateSubnetA
+    Export:
+      Name: WorkshopPrivateSubnetA
+
+  PrivateSubnetC:
+    Description: Private Subnet C
+    Value: !Ref PrivateSubnetC
+    Export:
+      Name: WorkshopPrivateSubnetCAWSTemplateFormatVersion: "2010-09-09"
 Description: Network Stack
