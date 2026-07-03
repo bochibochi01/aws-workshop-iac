@@ -9,15 +9,14 @@ Resources:
       CidrBlock: 10.0.0.0/16
       EnableDnsHostnames: true
       EnableDnsSupport: true
-
       Tags:
         - Key: Name
-          Value: workshop-vpc
+          Value: handson-user1
 
   InternetGateway:
     Type: AWS::EC2::InternetGateway
 
-  AttachInternetGateway:
+  AttachIGW:
     Type: AWS::EC2::VPCGatewayAttachment
     Properties:
       VpcId: !Ref VPC
@@ -30,10 +29,9 @@ Resources:
       AvailabilityZone: ap-northeast-1a
       CidrBlock: 10.0.1.0/24
       MapPublicIpOnLaunch: true
-
       Tags:
         - Key: Name
-          Value: public-subnet-a
+          Value: パブリックサブネット-1a
 
   PublicSubnetC:
     Type: AWS::EC2::Subnet
@@ -42,10 +40,9 @@ Resources:
       AvailabilityZone: ap-northeast-1c
       CidrBlock: 10.0.2.0/24
       MapPublicIpOnLaunch: true
-
       Tags:
         - Key: Name
-          Value: public-subnet-c
+          Value: パブリックサブネット-1c
 
   PrivateSubnetA:
     Type: AWS::EC2::Subnet
@@ -53,10 +50,9 @@ Resources:
       VpcId: !Ref VPC
       AvailabilityZone: ap-northeast-1a
       CidrBlock: 10.0.3.0/24
-
       Tags:
         - Key: Name
-          Value: private-subnet-a
+          Value: プライベートサブネット-1a
 
   PrivateSubnetC:
     Type: AWS::EC2::Subnet
@@ -64,65 +60,6 @@ Resources:
       VpcId: !Ref VPC
       AvailabilityZone: ap-northeast-1c
       CidrBlock: 10.0.4.0/24
-
       Tags:
         - Key: Name
-          Value: private-subnet-c
-
-  PublicRouteTable:
-    Type: AWS::EC2::RouteTable
-    Properties:
-      VpcId: !Ref VPC
-
-  DefaultRoute:
-    Type: AWS::EC2::Route
-    DependsOn: AttachInternetGateway
-    Properties:
-      RouteTableId: !Ref PublicRouteTable
-      DestinationCidrBlock: 0.0.0.0/0
-      GatewayId: !Ref InternetGateway
-
-  PublicSubnetARouteAssociation:
-    Type: AWS::EC2::SubnetRouteTableAssociation
-    Properties:
-      SubnetId: !Ref PublicSubnetA
-      RouteTableId: !Ref PublicRouteTable
-
-  PublicSubnetCRouteAssociation:
-    Type: AWS::EC2::SubnetRouteTableAssociation
-    Properties:
-      SubnetId: !Ref PublicSubnetC
-      RouteTableId: !Ref PublicRouteTable
-
-Outputs:
-
-  VpcId:
-    Description: VPC ID
-    Value: !Ref VPC
-    Export:
-      Name: WorkshopVpcId
-
-  PublicSubnetA:
-    Description: Public Subnet A
-    Value: !Ref PublicSubnetA
-    Export:
-      Name: WorkshopPublicSubnetA
-
-  PublicSubnetC:
-    Description: Public Subnet C
-    Value: !Ref PublicSubnetC
-    Export:
-      Name: WorkshopPublicSubnetC
-
-  PrivateSubnetA:
-    Description: Private Subnet A
-    Value: !Ref PrivateSubnetA
-    Export:
-      Name: WorkshopPrivateSubnetA
-
-  PrivateSubnetC:
-    Description: Private Subnet C
-    Value: !Ref PrivateSubnetC
-    Export:
-      Name: WorkshopPrivateSubnetCAWSTemplateFormatVersion: "2010-09-09"
-Description: Network Stack
+          Value: プライベートサブネット-1c
