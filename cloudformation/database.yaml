@@ -1,0 +1,18 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Database Stack
+
+Resources:
+
+  Database:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      Engine: mysql
+      DBInstanceClass: db.t3.micro
+      AllocatedStorage: 20
+
+      MasterUsername: admin
+      MasterUserPassword: Password123!
+
+      MultiAZ: true
+
+      PubliclyAccessible: false
