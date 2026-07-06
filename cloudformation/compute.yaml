@@ -1,38 +1,43 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: Compute Stack
 
 Resources:
 
-  LaunchTemplate:
-    Type: AWS::EC2::LaunchTemplate
-    Properties:
-      LaunchTemplateData:
+  DemoSecurityGroup:
 
-        ImageId: ami-0d52744d6551d851e
+    Type: AWS::EC2::SecurityGroup
 
-        InstanceType: t3.micro
-
-        UserData:
-          Fn::Base64: |
-            #!/bin/bash
-            yum install -y httpd
-            systemctl enable httpd
-            systemctl start httpd
-
-  AutoScalingGroup:
-    Type: AWS::AutoScaling::AutoScalingGroup
     Properties:
 
-      MinSize: 2
+      GroupDescription: Demo SG
 
-      MaxSize: 4
+      VpcId: !ImportValue WorkshopVPC
 
-      DesiredCapacity: 2
+      SecurityGroupIngress:
 
-      VPCZoneIdentifier:
-        - subnet-0a73986e54db4c345
-        - subnet-05fb7f0b9bda32a7c
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
 
-      LaunchTemplate:
-        LaunchTemplateId: !Ref LaunchTemplate
-        Version: !GetAtt LaunchTemplate.LatestVersionNumber
+        - IpProtocol: tcp
+          FromPort: 8080
+          ToPort: 8080
+          CidrIp: 0.0.0.0/0
+
+  DemoInstance:
+
+    Type: AWS::EC2::Instance
+
+    Properties:
+
+      InstanceType: t3.micro
+
+      ImageId: ami-0d52744d6551d851e
+
+      SubnetId: !ImportValue WorkshopPublicSubnet1A
+      SecurityGroupIds:
+        - !Ref DemoSecurityGroup
+
+      Tags:
+        - Key: Name
+          Value: WorkshopApp
