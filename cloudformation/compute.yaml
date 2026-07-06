@@ -30,8 +30,8 @@ Resources:
       DesiredCapacity: 2
 
       VPCZoneIdentifier:
-        - subnet-xxxxxxxx
-        - subnet-yyyyyyyy
+        - subnet-0a73986e54db4c345
+        - subnet-05fb7f0b9bda32a7c
 
       LaunchTemplate:
         LaunchTemplateId: !Ref LaunchTemplate
