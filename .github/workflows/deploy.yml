@@ -29,3 +29,8 @@ jobs:
           aws cloudformation deploy \
             --stack-name workshop-network \
             --template-file cloudformation/network.yaml
+- name: Deploy Compute
+  run: |
+    aws cloudformation deploy \
+      --stack-name workshop-compute \
+      --template-file cloudformation/compute.yaml
