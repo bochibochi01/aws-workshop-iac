@@ -10,13 +10,10 @@ permissions:
   contents: read
 
 jobs:
-
   deploy-network:
-
     runs-on: ubuntu-latest
 
     steps:
-
       - uses: actions/checkout@v4
 
       - uses: aws-actions/configure-aws-credentials@v4
@@ -29,8 +26,9 @@ jobs:
           aws cloudformation deploy \
             --stack-name workshop-network \
             --template-file cloudformation/network.yaml
-- name: Deploy Compute
-  run: |
-    aws cloudformation deploy \
-      --stack-name workshop-compute \
-      --template-file cloudformation/compute.yaml
+
+      - name: Deploy Compute
+        run: |
+          aws cloudformation deploy \
+            --stack-name workshop-compute \
+            --template-file cloudformation/compute.yaml
