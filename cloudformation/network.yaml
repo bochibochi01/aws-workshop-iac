@@ -1,65 +1,117 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: Network Stack
+
+Description: Workshop Network
 
 Resources:
 
-  VPC:
+  WorkshopVPC:
     Type: AWS::EC2::VPC
     Properties:
       CidrBlock: 10.0.0.0/16
-      EnableDnsHostnames: true
       EnableDnsSupport: true
+      EnableDnsHostnames: true
+
       Tags:
         - Key: Name
-          Value: handson-user1
+          Value: workshop-vpc
 
   InternetGateway:
     Type: AWS::EC2::InternetGateway
 
-  AttachIGW:
+  AttachGateway:
     Type: AWS::EC2::VPCGatewayAttachment
     Properties:
-      VpcId: !Ref VPC
+      VpcId: !Ref WorkshopVPC
       InternetGatewayId: !Ref InternetGateway
 
-  PublicSubnetA:
+  PublicSubnet1A:
     Type: AWS::EC2::Subnet
     Properties:
-      VpcId: !Ref VPC
-      AvailabilityZone: ap-northeast-1a
+      VpcId: !Ref WorkshopVPC
       CidrBlock: 10.0.1.0/24
-      MapPublicIpOnLaunch: true
-      Tags:
-        - Key: Name
-          Value: パブリックサブネット-1a
-
-  PublicSubnetC:
-    Type: AWS::EC2::Subnet
-    Properties:
-      VpcId: !Ref VPC
-      AvailabilityZone: ap-northeast-1c
-      CidrBlock: 10.0.2.0/24
-      MapPublicIpOnLaunch: true
-      Tags:
-        - Key: Name
-          Value: パブリックサブネット-1c
-
-  PrivateSubnetA:
-    Type: AWS::EC2::Subnet
-    Properties:
-      VpcId: !Ref VPC
       AvailabilityZone: ap-northeast-1a
-      CidrBlock: 10.0.3.0/24
+
+      MapPublicIpOnLaunch: true
+
       Tags:
         - Key: Name
-          Value: プライベートサブネット-1a
+          Value: PublicSubnet-1A
 
-  PrivateSubnetC:
+  PublicSubnet1C:
     Type: AWS::EC2::Subnet
     Properties:
-      VpcId: !Ref VPC
+      VpcId: !Ref WorkshopVPC
+      CidrBlock: 10.0.2.0/24
       AvailabilityZone: ap-northeast-1c
-      CidrBlock: 10.0.4.0/24
+
+      MapPublicIpOnLaunch: true
+
       Tags:
         - Key: Name
-          Value: プライベートサブネット-1c
+          Value: PublicSubnet-1C
+
+  PrivateSubnet1A:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref WorkshopVPC
+      CidrBlock: 10.0.11.0/24
+      AvailabilityZone: ap-northeast-1a
+
+      Tags:
+        - Key: Name
+          Value: PrivateSubnet-1A
+
+  PrivateSubnet1C:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref WorkshopVPC
+      CidrBlock: 10.0.12.0/24
+      AvailabilityZone: ap-northeast-1c
+
+      Tags:
+        - Key: Name
+          Value: PrivateSubnet-1C
+
+  PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref WorkshopVPC
+
+  PublicRoute:
+    Type: AWS::EC2::Route
+
+    DependsOn: AttachGateway
+
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+
+      DestinationCidrBlock: 0.0.0.0/0
+
+      GatewayId: !Ref InternetGateway
+
+  PublicSubnet1AAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+
+      SubnetId: !Ref PublicSubnet1A
+
+  PublicSubnet1CAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+
+      SubnetId: !Ref PublicSubnet1C
+
+Outputs:
+
+  VPCId:
+    Value: !Ref WorkshopVPC
+
+  PublicSubnet1A:
+    Value: !Ref PublicSubnet1A
+
+  PublicSubnet1C:
+    Value: !Ref PublicSubnet1C
