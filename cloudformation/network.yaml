@@ -30,7 +30,6 @@ Resources:
       VpcId: !Ref WorkshopVPC
       CidrBlock: 10.0.1.0/24
       AvailabilityZone: ap-northeast-1a
-
       MapPublicIpOnLaunch: true
 
       Tags:
@@ -43,34 +42,11 @@ Resources:
       VpcId: !Ref WorkshopVPC
       CidrBlock: 10.0.2.0/24
       AvailabilityZone: ap-northeast-1c
-
       MapPublicIpOnLaunch: true
 
       Tags:
         - Key: Name
           Value: PublicSubnet-1C
-
-  PrivateSubnet1A:
-    Type: AWS::EC2::Subnet
-    Properties:
-      VpcId: !Ref WorkshopVPC
-      CidrBlock: 10.0.11.0/24
-      AvailabilityZone: ap-northeast-1a
-
-      Tags:
-        - Key: Name
-          Value: PrivateSubnet-1A
-
-  PrivateSubnet1C:
-    Type: AWS::EC2::Subnet
-    Properties:
-      VpcId: !Ref WorkshopVPC
-      CidrBlock: 10.0.12.0/24
-      AvailabilityZone: ap-northeast-1c
-
-      Tags:
-        - Key: Name
-          Value: PrivateSubnet-1C
 
   PublicRouteTable:
     Type: AWS::EC2::RouteTable
@@ -79,39 +55,41 @@ Resources:
 
   PublicRoute:
     Type: AWS::EC2::Route
-
     DependsOn: AttachGateway
 
     Properties:
       RouteTableId: !Ref PublicRouteTable
-
       DestinationCidrBlock: 0.0.0.0/0
-
       GatewayId: !Ref InternetGateway
 
   PublicSubnet1AAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
-
     Properties:
       RouteTableId: !Ref PublicRouteTable
-
       SubnetId: !Ref PublicSubnet1A
 
   PublicSubnet1CAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
-
     Properties:
       RouteTableId: !Ref PublicRouteTable
-
       SubnetId: !Ref PublicSubnet1C
 
 Outputs:
 
   VPCId:
+    Description: VPC ID
     Value: !Ref WorkshopVPC
+    Export:
+      Name: WorkshopVPC
 
-  PublicSubnet1A:
+  PublicSubnet1AOutput:
+    Description: Public Subnet 1A
     Value: !Ref PublicSubnet1A
+    Export:
+      Name: WorkshopPublicSubnet1A
 
-  PublicSubnet1C:
+  PublicSubnet1COutput:
+    Description: Public Subnet 1C
     Value: !Ref PublicSubnet1C
+    Export:
+      Name: WorkshopPublicSubnet1C
