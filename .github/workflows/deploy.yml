@@ -29,6 +29,10 @@ jobs:
           aws cloudformation validate-template \
           --template-body file://cloudformation/network.yaml
 
+　　　- name: Lint
+　　　  run: |
+ 　　   cfn-lint cloudformation/network.yaml
+
   deploy:
 
     needs: validate
