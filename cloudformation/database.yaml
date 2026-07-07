@@ -1,18 +1,42 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: Database Stack
+
+Description: Workshop Database
 
 Resources:
 
-  Database:
-    Type: AWS::RDS::DBInstance
+  DatabaseSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+
     Properties:
+      DBSubnetGroupDescription: Workshop DB Subnet Group
+
+      SubnetIds:
+        - !ImportValue WorkshopPublicSubnet1A
+        - !ImportValue WorkshopPublicSubnet1C
+
+  WorkshopDatabase:
+
+    Type: AWS::RDS::DBInstance
+
+    Properties:
+
+      DBInstanceIdentifier: workshop-db
+
       Engine: mysql
+
+      EngineVersion: "8.0"
+
       DBInstanceClass: db.t3.micro
+
       AllocatedStorage: 20
 
       MasterUsername: admin
+
       MasterUserPassword: Password123!
 
-      MultiAZ: true
+      PubliclyAccessible: true
 
-      PubliclyAccessible: false
+      DBSubnetGroupName:
+        !Ref DatabaseSubnetGroup
+
+      BackupRetentionPeriod: 0
