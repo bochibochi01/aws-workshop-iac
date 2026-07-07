@@ -1,14 +1,15 @@
 AWSTemplateFormatVersion: '2010-09-09'
 
+Description: Workshop Compute
+
 Resources:
 
   DemoSecurityGroup:
-
     Type: AWS::EC2::SecurityGroup
 
     Properties:
 
-      GroupDescription: Demo SG
+      GroupDescription: Demo Security Group
 
       VpcId: !ImportValue WorkshopVPC
 
@@ -25,7 +26,6 @@ Resources:
           CidrIp: 0.0.0.0/0
 
   DemoInstance:
-
     Type: AWS::EC2::Instance
 
     Properties:
@@ -35,9 +35,30 @@ Resources:
       ImageId: ami-0d52744d6551d851e
 
       SubnetId: !ImportValue WorkshopPublicSubnet1A
+
       SecurityGroupIds:
         - !Ref DemoSecurityGroup
+
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash
+
+          dnf update -y
+
+          dnf install java-17-amazon-corretto -y
+
+          mkdir -p /opt/workshop
+
+          echo "Java installed" > /opt/workshop/setup.txt
 
       Tags:
         - Key: Name
           Value: WorkshopApp
+
+Outputs:
+
+  InstanceId:
+    Value: !Ref DemoInstance
+
+  SecurityGroupId:
+    Value: !Ref DemoSecurityGroup
