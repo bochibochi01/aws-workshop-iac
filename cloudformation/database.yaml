@@ -31,8 +31,6 @@ Resources:
 
       Engine: mysql
 
-      EngineVersion: "8.0.35"
-
       DBInstanceClass: db.t3.micro
 
       AllocatedStorage: 20
