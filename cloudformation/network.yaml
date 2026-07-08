@@ -6,6 +6,7 @@ Resources:
 
   WorkshopVPC:
     Type: AWS::EC2::VPC
+
     Properties:
       CidrBlock: 10.0.0.0/16
       EnableDnsSupport: true
@@ -13,19 +14,29 @@ Resources:
 
       Tags:
         - Key: Name
-          Value: workshop-vpc
+          Value: WorkshopVPC
+
 
   InternetGateway:
     Type: AWS::EC2::InternetGateway
 
+    Properties:
+      Tags:
+        - Key: Name
+          Value: WorkshopIGW
+
+
   AttachGateway:
     Type: AWS::EC2::VPCGatewayAttachment
+
     Properties:
       VpcId: !Ref WorkshopVPC
       InternetGatewayId: !Ref InternetGateway
 
+
   PublicSubnet1A:
     Type: AWS::EC2::Subnet
+
     Properties:
       VpcId: !Ref WorkshopVPC
       CidrBlock: 10.0.1.0/24
@@ -36,8 +47,10 @@ Resources:
         - Key: Name
           Value: PublicSubnet-1A
 
+
   PublicSubnet1C:
     Type: AWS::EC2::Subnet
+
     Properties:
       VpcId: !Ref WorkshopVPC
       CidrBlock: 10.0.2.0/24
@@ -48,13 +61,21 @@ Resources:
         - Key: Name
           Value: PublicSubnet-1C
 
+
   PublicRouteTable:
     Type: AWS::EC2::RouteTable
+
     Properties:
       VpcId: !Ref WorkshopVPC
 
+      Tags:
+        - Key: Name
+          Value: WorkshopPublicRouteTable
+
+
   PublicRoute:
     Type: AWS::EC2::Route
+
     DependsOn: AttachGateway
 
     Properties:
@@ -62,34 +83,32 @@ Resources:
       DestinationCidrBlock: 0.0.0.0/0
       GatewayId: !Ref InternetGateway
 
+
   PublicSubnet1AAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
+
     Properties:
       RouteTableId: !Ref PublicRouteTable
       SubnetId: !Ref PublicSubnet1A
 
+
   PublicSubnet1CAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
+
     Properties:
       RouteTableId: !Ref PublicRouteTable
       SubnetId: !Ref PublicSubnet1C
+
 
 Outputs:
 
   VPCId:
     Description: VPC ID
     Value: !Ref WorkshopVPC
+
     Export:
       Name: WorkshopVPC
 
-  PublicSubnet1AOutput:
-    Description: Public Subnet 1A
-    Value: !Ref PublicSubnet1A
-    Export:
-      Name: WorkshopPublicSubnet1A
 
-  PublicSubnet1COutput:
-    Description: Public Subnet 1C
-    Value: !Ref PublicSubnet1C
-    Export:
-      Name: WorkshopPublicSubnet1C
+  PublicSubnet1AOutput:
+    Description
