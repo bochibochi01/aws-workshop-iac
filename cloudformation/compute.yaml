@@ -4,6 +4,40 @@ Description: Workshop Compute
 
 Resources:
 
+  WorkshopEC2Role:
+    Type: AWS::IAM::Role
+
+    Properties:
+
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+
+        Statement:
+          - Effect: Allow
+
+            Principal:
+              Service:
+                - ec2.amazonaws.com
+
+            Action:
+              - sts:AssumeRole
+
+      ManagedPolicyArns:
+
+        - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+
+        - arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess
+
+
+  WorkshopInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+
+    Properties:
+
+      Roles:
+        - !Ref WorkshopEC2Role
+
+
   DemoSecurityGroup:
     Type: AWS::EC2::SecurityGroup
 
@@ -25,6 +59,7 @@ Resources:
           ToPort: 8080
           CidrIp: 0.0.0.0/0
 
+
   DemoInstance:
     Type: AWS::EC2::Instance
 
@@ -32,9 +67,13 @@ Resources:
 
       InstanceType: t3.micro
 
+      # Ubuntu 22.04
       ImageId: ami-0d52744d6551d851e
 
       SubnetId: !ImportValue WorkshopPublicSubnet1A
+
+      IamInstanceProfile:
+        !Ref WorkshopInstanceProfile
 
       SecurityGroupIds:
         - !Ref DemoSecurityGroup
@@ -43,17 +82,32 @@ Resources:
         Fn::Base64: !Sub |
           #!/bin/bash
 
-          dnf update -y
+          apt update
 
-          dnf install java-17-amazon-corretto -y
+          apt install openjdk-17-jdk -y
+
+          apt install ruby-full wget -y
+
+          cd /tmp
+
+          wget https://aws-codedeploy-ap-northeast-1.s3.ap-northeast-1.amazonaws.com/latest/install
+
+          chmod +x install
+
+          ./install auto
+
+          systemctl enable codedeploy-agent
+
+          systemctl start codedeploy-agent
 
           mkdir -p /opt/workshop
 
-          echo "Java installed" > /opt/workshop/setup.txt
+          echo "Setup Complete" > /opt/workshop/setup.txt
 
       Tags:
         - Key: Name
           Value: WorkshopApp
+
 
 Outputs:
 
