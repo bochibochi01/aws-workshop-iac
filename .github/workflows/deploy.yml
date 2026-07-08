@@ -1,4 +1,4 @@
-name: AWS Workshop Infrastructure
+name: TEST-12345AWS Workshop Infrastructure
 
 on:
   workflow_dispatch:
