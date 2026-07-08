@@ -1,9 +1,7 @@
-name: AWS Workshop Demo
+name: AWS Workshop Infrastructure
 
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
 
 permissions:
   id-token: write
@@ -39,6 +37,7 @@ jobs:
           aws cloudformation validate-template \
             --template-body file://cloudformation/compute.yaml
 
+
   deploy-network:
 
     needs: validate
@@ -59,6 +58,7 @@ jobs:
           aws cloudformation deploy \
             --stack-name workshop-network \
             --template-file cloudformation/network.yaml
+
 
   deploy-database:
 
@@ -81,6 +81,7 @@ jobs:
             --stack-name workshop-database \
             --template-file cloudformation/database.yaml
 
+
   deploy-compute:
 
     needs: deploy-database
@@ -100,4 +101,5 @@ jobs:
         run: |
           aws cloudformation deploy \
             --stack-name workshop-compute \
-            --template-file cloudformation/compute.yaml
+            --template-file cloudformation/compute.yaml \
+            --capabilities CAPABILITY_NAMED_IAM
