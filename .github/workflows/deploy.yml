@@ -1,4 +1,4 @@
-name: TEST-12345AWS Workshop Infrastructure
+name: TEST-DEBUG-12345
 
 on:
   workflow_dispatch:
@@ -22,21 +22,26 @@ jobs:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: ap-northeast-1
 
-      - name: Show Network File
+      - name: Current Directory
         run: |
           echo "===== CURRENT DIRECTORY ====="
           pwd
 
+      - name: Show Files
+        run: |
           echo "===== FILES ====="
           find .
 
+      - name: Show Network File
+        run: |
           echo "===== NETWORK YAML ====="
           cat cloudformation/network.yaml
 
       - name: Validate Network
         run: |
-          cat cloudformation/network.yaml
-          exit 1
+          echo "===== VALIDATING NETWORK ====="
+          aws cloudformation validate-template \
+            --template-body file://cloudformation/network.yaml
 
       - name: Show Database File
         run: |
@@ -45,6 +50,7 @@ jobs:
 
       - name: Validate Database
         run: |
+          echo "===== VALIDATING DATABASE ====="
           aws cloudformation validate-template \
             --template-body file://cloudformation/database.yaml
 
@@ -55,9 +61,9 @@ jobs:
 
       - name: Validate Compute
         run: |
+          echo "===== VALIDATING COMPUTE ====="
           aws cloudformation validate-template \
             --template-body file://cloudformation/compute.yaml
-
 
   deploy-network:
 
@@ -80,47 +86,6 @@ jobs:
             --stack-name workshop-network \
             --template-file cloudformation/network.yaml
 
-
   deploy-database:
 
-    needs: deploy-network
-
-    runs-on: ubuntu-latest
-
-    steps:
-
-      - uses: actions/checkout@v4
-
-      - uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
-          aws-region: ap-northeast-1
-
-      - name: Deploy Database
-        run: |
-          aws cloudformation deploy \
-            --stack-name workshop-database \
-            --template-file cloudformation/database.yaml
-
-
-  deploy-compute:
-
-    needs: deploy-database
-
-    runs-on: ubuntu-latest
-
-    steps:
-
-      - uses: actions/checkout@v4
-
-      - uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
-          aws-region: ap-northeast-1
-
-      - name: Deploy Compute
-        run: |
-          aws cloudformation deploy \
-            --stack-name workshop-compute \
-            --template-file cloudformation/compute.yaml \
-            --capabilities CAPABILITY_NAMED_IAM
+    needs
