@@ -35,8 +35,8 @@ jobs:
 
       - name: Validate Network
         run: |
-          aws cloudformation validate-template \
-            --template-body file://cloudformation/network.yaml
+          cat cloudformation/network.yaml
+          exit 1
 
       - name: Show Database File
         run: |
