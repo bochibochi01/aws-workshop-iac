@@ -64,28 +64,3 @@ jobs:
           echo "===== VALIDATING COMPUTE ====="
           aws cloudformation validate-template \
             --template-body file://cloudformation/compute.yaml
-
-  deploy-network:
-
-    needs: validate
-
-    runs-on: ubuntu-latest
-
-    steps:
-
-      - uses: actions/checkout@v4
-
-      - uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
-          aws-region: ap-northeast-1
-
-      - name: Deploy Network
-        run: |
-          aws cloudformation deploy \
-            --stack-name workshop-network \
-            --template-file cloudformation/network.yaml
-
-  deploy-database:
-
-    needs
