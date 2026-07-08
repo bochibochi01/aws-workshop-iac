@@ -98,3 +98,29 @@ Resources:
     Properties:
       RouteTableId: !Ref PublicRouteTable
       SubnetId: !Ref PublicSubnet1C
+
+
+Outputs:
+
+  VPCId:
+    Description: VPC ID
+    Value: !Ref WorkshopVPC
+
+    Export:
+      Name: WorkshopVPC
+
+
+  PublicSubnet1AOutput:
+    Description: Public Subnet 1A
+    Value: !Ref PublicSubnet1A
+
+    Export:
+      Name: WorkshopPublicSubnet1A
+
+
+  PublicSubnet1COutput:
+    Description: Public Subnet 1C
+    Value: !Ref PublicSubnet1C
+
+    Export:
+      Name: WorkshopPublicSubnet1C
